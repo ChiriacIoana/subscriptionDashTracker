@@ -3,10 +3,11 @@ import {PORT} from './config/env.js'; // Import the PORT variable from the envir
 import userRouter from './routes/user.routes.js';
 import authRouter from './routes/auth.routes.js';
 import subscriptionRouter from './routes/subscription.routes.js';
+import connectToDatabase from "./database/mongodb.js";
 
 const app = express(); // Create an Express application
 
-app.use('api/v1/auth', authRouter); // Use the auth router for authentication-related routes
+app.use('/api/v1/auth', authRouter); // Use the auth router for authentication-related routes
 app.use('/api/v1/users', userRouter); // Use the user router for user-related routes
 app.use('/api/v1/subscriptions', subscriptionRouter); // Use the subscription router for subscription-related routes
 
@@ -16,8 +17,10 @@ app.get('/', (req, res) => {
 
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Subscription Tracker API is running on http://localhost:${PORT}`);
+
+   await connectToDatabase();
 })
 
 // Export the app for testing or further configuration

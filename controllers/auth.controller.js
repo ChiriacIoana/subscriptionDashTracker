@@ -52,8 +52,40 @@ export const signUp = async (req, res, next) => {
     }
 }
 
-export const signIn = async () => {
+export const signIn = async (req, res, next) => {
+    try {
+        const { email, password } = req.body; // Extract email and password from the request body
 
+        // Find the user by email
+        const user = await User.findOne({ email });
+
+        if(!user) {
+            const error = new Error('User not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password); // Compare the provided password with the hashed password in the database
+        if(!isPasswordValid) {
+            const error = new Error('Invalid password');
+            error.statusCode = 401; // Unauthorized status code
+            throw error;
+        }
+
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRATION }); // Generate a JWT token for the user if sigh-in validation is successful
+
+        res.status(200).json({
+            success: true,
+            message: 'User signed in successfully',
+            data: {
+                token,
+                user, // Return the user data
+            }
+        }); // Send a success response with the user data and token
+
+    } catch (error) {
+        next(error);
+    }
 }
 
 export const signOut = async () => {

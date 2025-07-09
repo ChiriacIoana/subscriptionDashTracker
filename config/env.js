@@ -4,6 +4,7 @@ import {config} from 'dotenv';
 config({path:`.env.${process.env.NODE_ENV || 'development'}.local`}); // Load environment variables from .env file
 
 export const {
+    SERVER_URL, // Export the SERVER_URL variable from the environment
     PORT, NODE_ENV,
     DB_URI,
     JWT_SECRET, JWT_EXPIRATION,

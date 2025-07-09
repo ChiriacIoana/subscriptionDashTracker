@@ -13,7 +13,7 @@ export const sendReminders = serve(async (context) => {
     const REMINDERS = [7, 5, 2, 1]; // Define the reminder intervals in days
 
     // eslint-disable-next-line no-undef
-    if(!subscription || subscription.status != active) {
+    if(!subscription || subscription.status != 'active') {
         return;
     }
     const renewalDate = dayjs(subscription.renewalDate); // Get the renewal date of the subscription
@@ -34,7 +34,7 @@ export const sendReminders = serve(async (context) => {
 });
 
 const fetchSubscription = async (context, subscriptionId) => {
-    return await context.run('get subscription', () => {
+    return await context.run('get subscription', async () => {
         return Subscription.findById(subscriptionId).populate("user", "name email"); // Fetch the subscription from the database by its ID and populate the user field with the email
     });
 }

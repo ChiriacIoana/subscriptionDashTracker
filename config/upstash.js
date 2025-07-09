@@ -1,8 +1,8 @@
-import { Client as WorkflowClient } from '@upstash/redis';
+import { Client } from "@upstash/qstash";
 
 import { QSTASH_TOKEN, QSTASH_URL} from "./env.js";
 
-export const workflowClient = new WorkflowClient({
+export const workflowClient = new Client({
     baseUrl: QSTASH_URL,
     token: QSTASH_TOKEN,
 });

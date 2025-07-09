@@ -7,19 +7,21 @@ import connectToDatabase from "./database/mongodb.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
+import workflowRouter from "./routes/workflow.routes.js";
 
 const app = express(); // Create an Express application
 
+/// Middleware setup
 app.use(express.json()); // this is a built-in middleware that allows Express to parse JSON request bodies
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser()); // Use cookie-parser middleware to parse cookies in requests
+app.use(errorMiddleware); // Use the error middleware to handle errors globally
+app.use(arcjetMiddleware); // Use Arcjet middleware for request protection and security
 
 app.use('/api/v1/auth', authRouter); // Use the auth router for authentication-related routes
 app.use('/api/v1/users', userRouter); // Use the user router for user-related routes
 app.use('/api/v1/subscriptions', subscriptionRouter); // Use the subscription router for subscription-related routes
-
-app.use(errorMiddleware); // Use the error middleware to handle errors globally
-app.use(arcjetMiddleware); // Use Arcjet middleware for request protection and security
+app.use('/api/v1/workflows', workflowRouter); // Use the workflow router for workflow-related routes
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Subscrition Tracker API!');

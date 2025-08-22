@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {JWT_EXPIRATION, JWT_SECRET} from "../config/env.js";
+import { JWT_EXPIRATION, JWT_SECRET } from "../config/env.js";
 
 export const signUp = async (req, res, next) => {
     const session = await mongoose.startSession(); // Start a new session for transaction management
@@ -14,9 +14,9 @@ export const signUp = async (req, res, next) => {
         const { name, email, password } = req.body;
 
         //check if user already exists
-        const existingUser = await User.findOne({email});
+        const existingUser = await User.findOne({ email });
 
-        if(existingUser) {
+        if (existingUser) {
             const error = new Error('User already exists');
             error.statusCode = 409; // Conflict status code
             throw error;
@@ -28,10 +28,10 @@ export const signUp = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt); // Hash the password with the generated salt
 
         //create a new user
-        const newUsers = await User.create([{name, email, password: hashedPassword}], { session }); // Create a new user document in the database within the transaction
+        const newUsers = await User.create([{ name, email, password: hashedPassword }], { session }); // Create a new user document in the database within the transaction
         /// session is used to ensure that the operation is part of the transaction
 
-        const token = jwt.sign({userId: newUsers[0]._id}, JWT_SECRET, {expiresIn: JWT_EXPIRATION}); // Generate a JWT token for the new user
+        const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, { expiresIn: JWT_EXPIRATION }); // Generate a JWT token for the new user
 
         await session.commitTransaction(); // Commit the transaction if everything is successful
         session.endSession(); // End the session
@@ -59,14 +59,14 @@ export const signIn = async (req, res, next) => {
         // Find the user by email
         const user = await User.findOne({ email });
 
-        if(!user) {
+        if (!user) {
             const error = new Error('User not found');
             error.statusCode = 404;
             throw error;
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password); // Compare the provided password with the hashed password in the database
-        if(!isPasswordValid) {
+        if (!isPasswordValid) {
             const error = new Error('Invalid password');
             error.statusCode = 401; // Unauthorized status code
             throw error;
@@ -88,6 +88,44 @@ export const signIn = async (req, res, next) => {
     }
 }
 
-export const signOut = async () => {
+export const signOut = async (req, res, next) => {
+    try {
+        // For JWT-based auth, logout is typically handled client-side by removing the token
+        // But we can still provide an endpoint for consistency
+        res.status(200).json({
+            success: true,
+            message: 'User signed out successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 
+export const getMe = async (req, res, next) => {
+    try {
+        // The user is already attached to req by the authorize middleware
+        const user = req.user;
+
+        if (!user) {
+            const error = new Error('User not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'User retrieved successfully',
+            data: {
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    createdAt: user.createdAt,
+                    updatedAt: user.updatedAt
+                }
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
 }

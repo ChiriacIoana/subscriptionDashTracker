@@ -13,7 +13,6 @@ export const sendReminders = serve(async (context) => {
 
     const REMINDERS = [7, 5, 2, 1]; // Define the reminder intervals in days
 
-    // eslint-disable-next-line no-undef
     if(!subscription || subscription.status != 'active') {
         return;
     }

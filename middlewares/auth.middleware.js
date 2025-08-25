@@ -8,12 +8,12 @@ const authorize = async (req, res, next) => {
     try {
         let token;
 
-        if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1]; // Extract the token from the Authorization header
             /// the purpose of this is to check if the token is present in the request headers
         }
 
-        if(!token)
+        if (!token)
             return res.status(401).json({
                 success: false,
                 message: 'Unauthorized'
@@ -23,7 +23,7 @@ const authorize = async (req, res, next) => {
 
         const user = await User.findById(decoded.userId) // Find the user by ID
 
-        if(!user) {
+        if (!user) {
             return res.status(401).json({
                 success: false,
                 message: 'Unauthorized'
@@ -32,7 +32,7 @@ const authorize = async (req, res, next) => {
 
         req.user = user; // Attach the user to the request object for further use in the application
 
-    } catch(error) {
+    } catch (error) {
         res.status(401).json({
             success: false,
             message: 'Unauthorized access',

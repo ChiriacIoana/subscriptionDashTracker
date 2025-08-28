@@ -16,4 +16,5 @@ authRouter.post('/logout', signOut); // This will handle user logout requests
 // Path: /api/auth/me (GET) - requires authentication
 authRouter.get('/me', authorize, getMe); // This will get current user info
 
+
 export default authRouter;

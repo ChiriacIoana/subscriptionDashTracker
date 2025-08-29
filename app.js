@@ -12,6 +12,7 @@ import cors from 'cors';
 
 const app = express(); // Create an Express application
 
+
 /// Middleware setup
 app.use(cors({
     origin: 'http://localhost:3000',

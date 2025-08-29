@@ -38,10 +38,11 @@ export const signUp = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'User created successfully',
+            message: 'User created sdwuccessfully',
             data: {
                 token,
-                User: newUsers[0], // Return the newly created user data
+                user: newUsers[0], // Return the newly created user data
+
             }
         }); // Send a success response with the user data and token
 

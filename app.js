@@ -39,6 +39,13 @@ app.listen(PORT, async () => {
 
     await connectToDatabase();
 })
+app.use((err, req, res, next) => {
+    console.error(err.stack);
 
-// Export the app for testing or further configuration
+    res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || 'Internal server error',
+    });
+});
+
 export default app;

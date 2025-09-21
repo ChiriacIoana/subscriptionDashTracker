@@ -6,6 +6,7 @@ const arcjetMiddleware = async (req, res, next) => {
         const allowlisted = [
             '/api/auth',
             '/api/v1/workflows',
+            '/api/v1/subscriptions',
         ];
         if (allowlisted.some((p) => req.path.startsWith(p))) {
             return next();

@@ -81,11 +81,11 @@ const subscriptionSchema = new mongoose.Schema({
         },
     },
 
-}, {timestamps: true}); // Automatically add createdAt and updatedAt fields
+}, { timestamps: true }); // Automatically add createdAt and updatedAt fields
 
 //auto-calculate renewal date if missing
 subscriptionSchema.pre('save', function () {
-    if(!this.renewalDate) {
+    if (!this.renewalDate) {
         const renewalPeriods = {
             daily: 1,
             weekly: 7,
@@ -101,8 +101,6 @@ subscriptionSchema.pre('save', function () {
     if (this.renewalDate && this.renewalDate < new Date()) {
         this.status = 'expired'; // Set status to expired if renewal date has passed
     }
-    // eslint-disable-next-line no-undef
-    next();
 });
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema); // Create a model from the schema

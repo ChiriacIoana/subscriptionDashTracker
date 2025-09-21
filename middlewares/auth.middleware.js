@@ -6,6 +6,7 @@ import User from "../models/user.model.js";
 
 const authorize = async (req, res, next) => {
     try {
+        console.log("authorize middleware hit");
         let token;
 
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -21,7 +22,8 @@ const authorize = async (req, res, next) => {
         const decoded = jwt.verify(token, JWT_SECRET); // Verify the token using the secret key
         /// this will decode the token and extract the user ID from it
 
-        const user = await User.findById(decoded.userId) // Find the user by ID
+        console.log("decoded", decoded);
+        const user = await User.findById(decoded.userId || decoded.id) // Find the user by ID
 
         if (!user) {
             return res.status(401).json({
@@ -30,15 +32,15 @@ const authorize = async (req, res, next) => {
             });
         }
 
-        req.user = user; // Attach the user to the request object for further use in the application
+        req.user = user;
+        next(); // Attach the user to the request object for further use in the application
 
     } catch (error) {
-        res.status(401).json({
+        return res.status(401).json({
             success: false,
             message: 'Unauthorized access',
-            error: error.message || 'An error occurred while authorizing the user'
+            error: error.message || 'Error verifying token',
         });
-        next(error);
     }
 }
 

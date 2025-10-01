@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import authorize from "../middlewares/auth.middleware.js";
-import { createSubscription, getuserSubscriptions } from "../controllers/subscription.controller.js";
+import { createSubscription, getuserSubscriptions, cancelSubscription } from "../controllers/subscription.controller.js";
 
 const subscriptionRouter = Router();
 
@@ -24,17 +24,10 @@ subscriptionRouter.put('/:id', (req, res) => {
 });
 
 // Define a route to delete a subscription by ID
-subscriptionRouter.delete('/:id', (req, res) => {
-    res.send({ title: 'DELETE subscription' }); // Placeholder response for fetching all subscriptions
-});
+subscriptionRouter.put('/:id/cancel', authorize, cancelSubscription);
 
 // Define a route to get all subscriptions for a specific user
 subscriptionRouter.get('/user/:id', authorize, getuserSubscriptions);
-
-// Define a route to cancel a subscription by ID
-subscriptionRouter.put('/:id/cancel', (req, res) => {
-    res.send({ title: 'CANCEL subscription' }); // Placeholder response for fetching all subscriptions
-});
 
 // Define a route to get upcoming renewals for all subscriptions
 subscriptionRouter.get('/upcoming-renewals', (req, res) => {

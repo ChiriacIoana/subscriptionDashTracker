@@ -60,5 +60,34 @@ export const getuserSubscriptions = async (req, res, next) => {
     }
 }
 
+export const cancelSubscription = async (req, res, next) => {
+    try {
+        if (!req.user || !req.user._id) {
+            const error = new Error('User not authenticated');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const { id } = req.params;
+
+        // Find subscription and update status
+        const subscription = await Subscription.findOneAndUpdate(
+            { $or: [{ _id: id }, { id }], user: req.user._id },
+            { status: 'cancelled' },
+            { new: true } // return updated subscription
+        );
+
+        if (!subscription) {
+            const error = new Error('Subscription not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({ success: true, data: subscription });
+    } catch (e) {
+        next(e);
+    }
+};
+
 // get all subscriptions
 // get subscription details

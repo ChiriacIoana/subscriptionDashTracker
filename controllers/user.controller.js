@@ -14,7 +14,7 @@ export const getUsers = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
 // function that gets a single user from the database
 export const getUser = async (req, res, next) => {
@@ -37,4 +37,37 @@ export const getUser = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
+
+export const updateUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { name, email } = req.body;
+
+        if (req.user._id.toString() !== userId) {
+            return res.status(403).json({ success: false, message: "Unauthorized" });
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { name, email },
+            { new: true }
+        ).select("-password");
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.json({
+            success: true,
+            message: "Profile updated successfully",
+            data: updatedUser,
+        });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update user",
+        });
+    }
+};

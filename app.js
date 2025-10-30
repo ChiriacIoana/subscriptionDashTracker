@@ -26,7 +26,7 @@ app.use(cookieParser()); // Use cookie-parser middleware to parse cookies in req
 app.use(asyncHandler(arcjetMiddleware)); // Use Arcjet middleware for request protection and security
 
 app.use('/api/auth', authRouter); // Use the auth router for authentication-related routes
-app.use('/api/v1/users', userRouter); // Use the user router for user-related routes
+app.use('/api/users', userRouter); // Use the user router for user-related routes
 app.use('/api/v1/subscriptions', subscriptionRouter); // Use the subscription router for subscription-related routes
 app.use('/api/v1/workflows', workflowRouter); // Use the workflow router for workflow-related routes
 

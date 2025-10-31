@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
 
 // function that fetches all users from the database
 export const getUsers = async (req, res, next) => {
@@ -68,6 +69,47 @@ export const updateUser = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Failed to update user",
+        });
+    }
+};
+export const changePassword = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Both fields are required" });
+        }
+
+        const user = await User.findById(userId).select("+password");
+        if (!user) {
+            return res
+                .status(404)
+                .json({ success: false, message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Current password is incorrect" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "Password updated successfully",
+        });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update password",
         });
     }
 };

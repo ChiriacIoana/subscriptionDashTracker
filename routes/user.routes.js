@@ -1,16 +1,14 @@
 import { Router } from 'express';
 import User from "../models/user.model.js";
 import authorize from "../middlewares/auth.middleware.js";
-import { getUser, getUsers, updateUser } from "../controllers/user.controller.js";
+import { getUser, getUsers, updateUser, changePassword } from "../controllers/user.controller.js";
 
 const userRouter = Router();
 
 // define a route that gets all users
-/// GET/users -> get all users
 userRouter.get('/', getUsers);
 
 // get the details of a specific user by ID
-/// GET/users/:id -> get user by ID
 userRouter.get('/:id', authorize, getUser);
 
 // create a new user
@@ -22,7 +20,7 @@ userRouter.post('/', (req, res) => {
 //nu
 userRouter.put('/me', authorize, async (req, res) => {
     try {
-        const userId = req.user._id; // Get user ID from the authorized user
+        const userId = req.user._id;
         const { name, email } = req.body;
 
         const updatedUser = await User.findByIdAndUpdate(
@@ -50,8 +48,9 @@ userRouter.put('/me', authorize, async (req, res) => {
 });
 
 // update an existing user by ID
-/// PUT/users/:id -> update user by ID
 userRouter.put('/:id', authorize, updateUser);
+
+userRouter.put('/:id/password', authorize, changePassword);
 
 // delete an existing user by ID
 /// DELETE/users/:id -> delete user by ID

@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
-// function that fetches all users from the database
 export const getUsers = async (req, res, next) => {
     try {
         const users = await User.find();
@@ -17,7 +16,6 @@ export const getUsers = async (req, res, next) => {
     }
 };
 
-// function that gets a single user from the database
 export const getUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id).select('-password'); // Exclude password field from the response
@@ -110,6 +108,34 @@ export const changePassword = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Failed to update password",
+        });
+    }
+};
+
+export const deleteUser = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            message: "Account deleted successfully",
+            data: { id: userId }
+        });
+
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to delete account",
         });
     }
 };

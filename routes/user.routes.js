@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import User from "../models/user.model.js";
 import authorize from "../middlewares/auth.middleware.js";
-import { getUser, getUsers, updateUser, changePassword } from "../controllers/user.controller.js";
+import { getUser, getUsers, updateUser, changePassword, deleteUser } from "../controllers/user.controller.js";
 
 const userRouter = Router();
 
@@ -53,9 +53,6 @@ userRouter.put('/:id', authorize, updateUser);
 userRouter.put('/:id/password', authorize, changePassword);
 
 // delete an existing user by ID
-/// DELETE/users/:id -> delete user by ID
-userRouter.delete('/:id', (req, res) => {
-    res.send({ title: 'DELETE user' }); // Placeholder response for fetching all users
-});
+userRouter.delete('/:id', authorize, deleteUser);
 
 export default userRouter;
